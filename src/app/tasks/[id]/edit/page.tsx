@@ -18,9 +18,9 @@ interface FormData {
   status: 'todo' | 'in_progress' | 'in_review' | 'done';
   priority: 'low' | 'medium' | 'high' | 'urgent';
   due_date: string;
-  project_id: string;
-  department_id: string;
-  assignee_id: string;
+  project_id: string | null;
+  department_id: string | null;
+  assignee_id: string | null;
 }
 
 interface Project {
@@ -125,9 +125,9 @@ export default function EditTaskPage({ params }: { params: Promise<{ id: string 
           status: taskData.status,
           priority: taskData.priority,
           due_date: taskData.due_date ? taskData.due_date.split('T')[0] : '',
-          project_id: taskData.project_id || '',
-          department_id: taskData.department_id || '',
-          assignee_id: taskData.assignee_id || '',
+          project_id: taskData.project_id || 'none',
+          department_id: taskData.department_id || 'none',
+          assignee_id: taskData.assignee_id || 'none',
         });
       } catch (error: any) {
         setError(error.message);
@@ -268,14 +268,14 @@ export default function EditTaskPage({ params }: { params: Promise<{ id: string 
               <div>
                 <Label htmlFor="project_id">所屬專案</Label>
                 <Select
-                  value={formData.project_id}
+                  value={formData.project_id === null ? undefined : formData.project_id}
                   onValueChange={(value) => setFormData({ ...formData, project_id: value })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="選擇專案" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">無</SelectItem>
+                    <SelectItem value="none">無</SelectItem>
                     {projects.map((project) => (
                       <SelectItem key={project.id} value={project.id}>
                         {project.name}
@@ -288,14 +288,14 @@ export default function EditTaskPage({ params }: { params: Promise<{ id: string 
               <div>
                 <Label htmlFor="department_id">所屬部門</Label>
                 <Select
-                  value={formData.department_id}
+                  value={formData.department_id === null ? undefined : formData.department_id}
                   onValueChange={(value) => setFormData({ ...formData, department_id: value })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="選擇部門" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">無</SelectItem>
+                    <SelectItem value="none">無</SelectItem>
                     {departments.map((department) => (
                       <SelectItem key={department.id} value={department.id}>
                         {department.name}
@@ -308,14 +308,14 @@ export default function EditTaskPage({ params }: { params: Promise<{ id: string 
               <div>
                 <Label htmlFor="assignee_id">負責人</Label>
                 <Select
-                  value={formData.assignee_id}
+                  value={formData.assignee_id === null ? undefined : formData.assignee_id}
                   onValueChange={(value) => setFormData({ ...formData, assignee_id: value })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="選擇負責人" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">未分配</SelectItem>
+                    <SelectItem value="none">未分配</SelectItem>
                     {users.map((user) => (
                       <SelectItem key={user.id} value={user.id}>
                         {user.email}
