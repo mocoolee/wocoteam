@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "https://ffnaejcxljfgatrcuope.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZmbmFlamN4bGpmZ2F0cmN1b3BlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg1NTUyNzUsImV4cCI6MjA1NDEzMTI3NX0.7jecjOIK6EUpuY_cVduMkfZw6qdVBlneuJAC6eJn4eA"
+  }
+} 
