@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase/client';
@@ -13,10 +13,21 @@ interface AuthError {
   message: string;
 }
 
-export default function LoginPage() {
-  const router = useRouter();
+function LoginMessage() {
   const searchParams = useSearchParams();
   const message = searchParams.get('message');
+
+  if (!message) return null;
+
+  return (
+    <Alert>
+      <AlertDescription>{message}</AlertDescription>
+    </Alert>
+  );
+}
+
+export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -53,11 +64,9 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {message && (
-          <Alert>
-            <AlertDescription>{message}</AlertDescription>
-          </Alert>
-        )}
+        <Suspense fallback={null}>
+          <LoginMessage />
+        </Suspense>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
