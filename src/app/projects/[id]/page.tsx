@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import DashboardLayout from '@/components/ui/dashboard-layout';
@@ -46,7 +46,8 @@ const statusText = {
   on_hold: '暫停中',
 };
 
-export default function ProjectPage({ params }: { params: { id: string } }) {
+export default function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
@@ -66,7 +67,7 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
         const { data, error: projectError } = await supabase
           .from('projects')
           .select('*')
-          .eq('id', params.id)
+          .eq('id', id)
           .single();
 
         if (projectError) throw projectError;
@@ -81,7 +82,7 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
     };
 
     fetchProject();
-  }, [params.id, router]);
+  }, [id, router]);
 
   const handleDelete = async () => {
     try {
@@ -89,7 +90,7 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
       const { error: deleteError } = await supabase
         .from('projects')
         .delete()
-        .eq('id', params.id);
+        .eq('id', id);
 
       if (deleteError) throw deleteError;
       router.push('/projects');

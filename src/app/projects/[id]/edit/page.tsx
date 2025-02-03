@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import DashboardLayout from '@/components/ui/dashboard-layout';
@@ -26,7 +26,8 @@ interface FormData {
   budget: string;
 }
 
-export default function EditProjectPage({ params }: { params: { id: string } }) {
+export default function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -53,7 +54,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
         const { data, error: projectError } = await supabase
           .from('projects')
           .select('*')
-          .eq('id', params.id)
+          .eq('id', id)
           .single();
 
         if (projectError) throw projectError;
@@ -75,7 +76,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
     };
 
     fetchProject();
-  }, [params.id, router]);
+  }, [id, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,10 +94,10 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
           end_date: formData.end_date || null,
           budget: formData.budget ? parseFloat(formData.budget) : null,
         })
-        .eq('id', params.id);
+        .eq('id', id);
 
       if (updateError) throw updateError;
-      router.push(`/projects/${params.id}`);
+      router.push(`/projects/${id}`);
     } catch (error: any) {
       setError(error.message);
       setSaving(false);
