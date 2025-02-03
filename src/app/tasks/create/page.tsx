@@ -130,9 +130,9 @@ export default function CreateTaskPage() {
         .insert({
           ...formData,
           description: formData.description || null,
-          project_id: formData.project_id === 'none' ? null : formData.project_id,
-          department_id: formData.department_id === 'none' ? null : formData.department_id,
-          assignee_id: formData.assignee_id === 'none' ? null : formData.assignee_id,
+          project_id: formData.project_id === "unassigned" ? null : formData.project_id,
+          department_id: formData.department_id === "unassigned" ? null : formData.department_id,
+          assignee_id: formData.assignee_id === "unassigned" ? null : formData.assignee_id,
           due_date: formData.due_date || null,
           creator_id: user.id,
         })
@@ -250,14 +250,14 @@ export default function CreateTaskPage() {
               <div>
                 <Label htmlFor="project_id">所屬專案</Label>
                 <Select
-                  value={formData.project_id === null ? undefined : formData.project_id}
-                  onValueChange={(value) => setFormData({ ...formData, project_id: value })}
+                  value={formData.project_id || "unassigned"}
+                  onValueChange={(value) => setFormData({ ...formData, project_id: value === "unassigned" ? null : value })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="選擇專案" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">無</SelectItem>
+                    <SelectItem value="unassigned">無</SelectItem>
                     {projects.map((project) => (
                       <SelectItem key={project.id} value={project.id}>
                         {project.name}
@@ -270,14 +270,14 @@ export default function CreateTaskPage() {
               <div>
                 <Label htmlFor="department_id">所屬部門</Label>
                 <Select
-                  value={formData.department_id === null ? undefined : formData.department_id}
-                  onValueChange={(value) => setFormData({ ...formData, department_id: value })}
+                  value={formData.department_id || "unassigned"}
+                  onValueChange={(value) => setFormData({ ...formData, department_id: value === "unassigned" ? null : value })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="選擇部門" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">無</SelectItem>
+                    <SelectItem value="unassigned">無</SelectItem>
                     {departments.map((department) => (
                       <SelectItem key={department.id} value={department.id}>
                         {department.name}
@@ -290,14 +290,14 @@ export default function CreateTaskPage() {
               <div>
                 <Label htmlFor="assignee_id">負責人</Label>
                 <Select
-                  value={formData.assignee_id === null ? undefined : formData.assignee_id}
-                  onValueChange={(value) => setFormData({ ...formData, assignee_id: value })}
+                  value={formData.assignee_id || "unassigned"}
+                  onValueChange={(value) => setFormData({ ...formData, assignee_id: value === "unassigned" ? null : value })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="選擇負責人" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">未分配</SelectItem>
+                    <SelectItem value="unassigned">未分配</SelectItem>
                     {users.map((user) => (
                       <SelectItem key={user.id} value={user.id}>
                         {user.email}
