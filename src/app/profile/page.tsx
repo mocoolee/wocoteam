@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Layout from '@/components/ui/Layout';
 import { supabase } from '@/lib/supabase/client';
@@ -15,6 +15,10 @@ interface Profile {
   role: string;
 }
 
+interface DatabaseError {
+  message: string;
+}
+
 export default function ProfilePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -23,11 +27,7 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
@@ -44,12 +44,17 @@ export default function ProfilePage() {
 
       if (error) throw error;
       setProfile(data);
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      const dbError = error as DatabaseError;
+      setError(dbError.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!profile) return;
@@ -80,8 +85,9 @@ export default function ProfilePage() {
 
       if (error) throw error;
       setMessage('個人資料已更新');
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      const dbError = error as DatabaseError;
+      setError(dbError.message);
     } finally {
       setUpdating(false);
     }

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase/client';
+import { AuthError } from '@supabase/supabase-js';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -63,8 +64,9 @@ export default function RegisterPage() {
 
         router.push('/auth/login?message=請檢查您的郵箱以完成註冊');
       }
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      const authError = error as AuthError;
+      setError(authError.message);
     } finally {
       setLoading(false);
     }

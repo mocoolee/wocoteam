@@ -9,6 +9,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
+interface AuthError {
+  message: string;
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -24,15 +28,16 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (authError) throw authError;
       router.push('/dashboard');
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      const authError = error as AuthError;
+      setError(authError.message);
     } finally {
       setLoading(false);
     }
